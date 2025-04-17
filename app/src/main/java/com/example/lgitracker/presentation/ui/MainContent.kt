@@ -1,4 +1,4 @@
-package com.example.lgitracker
+package com.example.lgitracker.presentation.ui
 
 import android.content.Intent
 import android.net.Uri
@@ -33,7 +33,12 @@ import androidx.health.connect.client.PermissionController
 import androidx.health.connect.client.permission.HealthPermission
 import androidx.health.connect.client.records.HeartRateRecord
 import androidx.health.connect.client.records.StepsRecord
-import com.example.lgitracker.ui.common.components.DatePickerDialog
+import com.example.lgitracker.core.data.remote.RequestSendStep
+import com.example.lgitracker.domain.models.HealthConnectStatusState
+import com.example.lgitracker.domain.models.RequestStepState
+import com.example.lgitracker.presentation.viewmodel.MainViewmodel
+import com.example.lgitracker.domain.models.StepCountState
+import com.example.lgitracker.presentation.ui.common.components.DatePickerDialog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -50,13 +55,15 @@ fun MainContent(viewmodel: MainViewmodel, modifier: Modifier) {
     val TAG = "main activtiy"
     val isShowDatePicker = remember { mutableStateOf(false) }
     val selectedDate = remember { mutableStateOf(LocalDate.now()) }
+    val postStepApiState by viewmodel.postStepState.collectAsState()
 
     val PERMISSIONS =
         setOf(
             HealthPermission.getReadPermission(HeartRateRecord::class),
             HealthPermission.getWritePermission(HeartRateRecord::class),
             HealthPermission.getReadPermission(StepsRecord::class),
-            HealthPermission.getWritePermission(StepsRecord::class)
+            HealthPermission.getWritePermission(StepsRecord::class),
+            HealthPermission.PERMISSION_READ_HEALTH_DATA_IN_BACKGROUND
         )
 
     val permissionLauncher = rememberLauncherForActivityResult(
@@ -125,6 +132,31 @@ fun MainContent(viewmodel: MainViewmodel, modifier: Modifier) {
                 ) {
                     Text("Pilih tanggal")
                 }
+
+                Spacer(Modifier.height(20.dp))
+
+                when(val requestPostStep = postStepApiState) {
+                    is RequestStepState.Loading -> {
+                        CircularProgressIndicator(
+                            Modifier
+                                .size(15.dp)
+                                .align(Alignment.CenterHorizontally))
+                    }
+
+                    else -> {
+                        Button(
+                            modifier = Modifier.align(Alignment.CenterHorizontally),
+                            onClick = {
+                                scope.launch(Dispatchers.IO) {
+                                    viewmodel.postStep(data.step)
+                                }
+                            }
+                        ) {
+                            Text("Post to API")
+                        }
+                    }
+                }
+
             }
             is StepCountState.Error -> {
                 Toast.makeText(context, data.message, Toast.LENGTH_SHORT).show()
@@ -146,6 +178,7 @@ fun MainContent(viewmodel: MainViewmodel, modifier: Modifier) {
 }
 
     private suspend fun readStep(healthConnectClient: HealthConnectClient, selectedDate: LocalDate,
-                         viewmodel: MainViewmodel) {
+                         viewmodel: MainViewmodel
+    ) {
         viewmodel.readTodaySteps(healthConnectClient, selectedDate)
     }

@@ -1,4 +1,4 @@
-package com.example.lgitracker.ui.theme
+package com.example.lgitracker.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

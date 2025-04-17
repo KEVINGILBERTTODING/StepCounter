@@ -1,4 +1,4 @@
-package com.example.lgitracker.ui.theme
+package com.example.lgitracker.presentation.ui.theme
 
 import android.app.Activity
 import android.os.Build

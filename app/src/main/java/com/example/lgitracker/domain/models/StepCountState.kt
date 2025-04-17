@@ -1,4 +1,4 @@
-package com.example.lgitracker
+package com.example.lgitracker.domain.models
 
 sealed class StepCountState{
     object Idle : StepCountState()

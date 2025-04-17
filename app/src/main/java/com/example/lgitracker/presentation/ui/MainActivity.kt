@@ -1,4 +1,4 @@
-package com.example.lgitracker
+package com.example.lgitracker.presentation.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -8,27 +8,28 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.example.lgitracker.presentation.viewmodel.MainViewmodel
 import com.example.lgitracker.presentation.ui.theme.LgiTrackerTheme
 
-class PermissionsRationaleActivity : ComponentActivity() {
+class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        val viewmodel : MainViewmodel by viewModels()
         enableEdgeToEdge()
         setContent {
             LgiTrackerTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    MainContent(Modifier.padding(innerPadding))
-
+                    MainContent(
+                        viewmodel,
+                        modifier = Modifier
+                            .padding(innerPadding)
+                            .fillMaxSize()
+                    )
                 }
             }
         }
     }
 }
 
-@Composable
-private fun MainContent(modifier: Modifier) {
 
-}

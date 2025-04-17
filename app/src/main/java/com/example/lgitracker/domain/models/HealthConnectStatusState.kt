@@ -1,4 +1,4 @@
-package com.example.lgitracker
+package com.example.lgitracker.domain.models
 
 import androidx.health.connect.client.HealthConnectClient
 

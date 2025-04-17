@@ -1,4 +1,4 @@
-package com.example.lgitracker.ui.common.components
+package com.example.lgitracker.presentation.ui.common.components
 
 import android.app.DatePickerDialog
 import android.util.Log
